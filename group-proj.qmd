@@ -15,3 +15,28 @@ execute:
   warning: false
 ---
 
+```{r}
+library(knitr)
+library(tidyverse)
+healthcare_spending <- read_csv("government_health_spending_per_person_international_dollar.csv")
+life_exp <- read_csv("lex.csv")
+```
+
+
+```{r}
+healthcare_spending_long <- pivot_longer(healthcare_spending, 
+                                         `1995`:`2010`, 
+                                         names_to = "Year",
+                                         values_to = "HealthSpendingPerCapita") |>
+  filter(Year >= 1995 & Year <= 2010)
+
+life_exp_long <- pivot_longer(life_exp,
+                              `1800`:`2100`, 
+                              names_to = "Year",
+                              values_to = "LifeExpAtBirth")
+
+joined_data_long <- full_join(healthcare_spending_long, 
+                              life_exp_long, 
+                              by = c("country", "Year"))
+```
+
