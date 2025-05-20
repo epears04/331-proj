@@ -1,0 +1,17 @@
+---
+title: "Group Project"
+subtitle: "Project Proposal and Data"
+author: "Ellie, Avery, and Bo"
+format: 
+  html:
+    embed-resources: true
+    code-tools: true
+    toc: true
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
