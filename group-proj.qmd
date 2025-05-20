@@ -18,8 +18,8 @@ execute:
 ```{r}
 library(knitr)
 library(tidyverse)
-healthcare_spending <- read_csv("government_health_spending_per_person_us.csv")
-life_exp <- read_csv("lex.csv")
+healthcare_spending <- read_csv("data/government_health_spending_per_person_us.csv")
+life_exp <- read_csv("data/lex.csv")
 ```
 
 
