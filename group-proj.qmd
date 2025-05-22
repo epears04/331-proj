@@ -36,8 +36,16 @@ life_exp_long <- life_exp |>
                values_to = "LifeExpAtBirth") |>
   filter(Year >= 1995 & Year <= 2010)
 
-joined_data_long <- full_join(healthcare_spending_long, 
+joined_data_long <- inner_join(healthcare_spending_long, 
                               life_exp_long, 
                               by = c("country", "Year"))
 ```
 
+We had a total of 33 NA's left, all from the Health Spending data, this table shows a few of those
+```{r}
+joined_data_long |>
+  mutate(has_NAs = is.na(HealthSpendingPerCapita)) |>
+  filter(has_NAs) |>
+  slice_sample(n = 5) |>
+  kable()
+```
