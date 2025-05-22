@@ -41,6 +41,7 @@ joined_data_long <- inner_join(healthcare_spending_long,
                               by = c("country", "Year"))
 ```
 
+
 We had a total of 33 NA's left, all from the Health Spending data, this table shows a few of those
 ```{r}
 joined_data_long |>
@@ -49,3 +50,7 @@ joined_data_long |>
   slice_sample(n = 5) |>
   kable()
 ```
+
+We are exploring government health spending per person in US dollars and life expectancy at birth. The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This data is from the Institute for Health Metrics and Evaluation from a study that was published in 2018 (http://gapm.io/dlex). The government health spending per person dataset gives the average health cost per person that has been paid by the government during a given year, in US dollars using the average exchange rate. This data is comes from the Global Health Observatory (https://www.who.int/gho/en/).
+
+We assume there is a relatively strong positive relationship between government spending and life expectancy. We hypothesize this because if the government spends more money on healthcare for each individual person, they will be receiving more health care and should be expected to live longer. (Outside source: https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2023.1123759/full)
