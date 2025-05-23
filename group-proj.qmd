@@ -2,6 +2,9 @@
 title: "Group Project"
 subtitle: "Project Proposal and Data"
 author: "Ellie, Avery, and Bo"
+bibliography: references.bib
+nocite: |
+  @*
 format: 
   html:
     embed-resources: true
@@ -13,15 +16,25 @@ execute:
   echo: true
   message: false
   warning: false
+
 ---
 
-```{r}
+```{r setup}
 library(knitr)
 library(tidyverse)
+library(bibtex)
+
 healthcare_spending <- read_csv("data/government_health_spending_per_person_us.csv")
 life_exp <- read_csv("data/lex.csv")
 ```
 
+## The Data
+
+We are exploring government health spending per person in US dollars and life expectancy at birth.
+The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This data is from the Institute for Health Metrics and Evaluation from a study that was published in 2018 @Life_Expectancy_at_Birth_Gapminder.
+The government health spending per person dataset gives the average health cost per person that has been paid by the government during a given year, in US dollars using the average exchange rate. This data is comes from the Global Health Observatory @Global_Health_Expenditure_Database.
+
+We assume there is a relatively strong positive relationship between government spending and life expectancy. We hypothesize this because if the government spends more money on healthcare for each individual person, they will hopefully be receiving more health care and should be expected to live longer.
 
 ```{r}
 healthcare_spending_long <- pivot_longer(healthcare_spending, 
@@ -51,6 +64,6 @@ joined_data_long |>
   kable()
 ```
 
-We are exploring government health spending per person in US dollars and life expectancy at birth. The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This data is from the Institute for Health Metrics and Evaluation from a study that was published in 2018 (http://gapm.io/dlex). The government health spending per person dataset gives the average health cost per person that has been paid by the government during a given year, in US dollars using the average exchange rate. This data is comes from the Global Health Observatory (https://www.who.int/gho/en/).
 
-We assume there is a relatively strong positive relationship between government spending and life expectancy. We hypothesize this because if the government spends more money on healthcare for each individual person, they will be receiving more health care and should be expected to live longer. (Outside source: https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2023.1123759/full)
+
+ 
