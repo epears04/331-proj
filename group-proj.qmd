@@ -25,6 +25,8 @@ execute:
 library(knitr)
 library(tidyverse)
 library(bibtex)
+library(gt)
+library(broom)
 
 healthcare_spending <- read_csv("data/government_health_spending_per_person_us.csv")
 life_exp <- read_csv("data/lex.csv")
@@ -92,3 +94,21 @@ joined_data_long |>
                        y = avg_life_exp)) +
   geom_point()
 ```
+
+
+## Linear Regression
+```{r}
+data_transform <- 
+  joined_data_long |>
+  group_by(country) |>
+  summarize(avg_life_exp = mean(LifeExpAtBirth),
+            avg_health_spending = mean(HealthSpendingPerCapita)) |>
+  mutate(adj_avg_life_exp = log(avg_life_exp),
+         adj_avg_health_spending = log(avg_health_spending))
+
+data_transform_lm <- lm(avg_life_exp ~ avg_health_spending, 
+                        data = data_transform)
+data_transform_lm |>
+  tbl_regression(intercept = TRUE)
+```
+
