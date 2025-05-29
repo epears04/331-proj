@@ -29,6 +29,9 @@ library(gganimate)
 library(gifski)
 library(gt)
 library(glue)
+library(broom)
+library(gtsummary)
+
 
 healthcare_spending <- read_csv("data/government_health_spending_per_person_us.csv")
 life_exp <- read_csv("data/lex.csv")
@@ -71,6 +74,7 @@ joined_data_long <- inner_join(healthcare_spending_long,
 ```
 
 These restrictions meant that we had no missing values for life expectancy at birth. 
+<<<<<<< HEAD
 We had a total of 33 missing values from health spending per capita
 
 The main countries that had missing values for health care spending per capita were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. 
@@ -79,17 +83,29 @@ There were a couple of other countries with missing values for health care spend
 
 ### Question 2.1.1
 
+=======
+We had a total of 33 missing values from health spending per person.The main countries that had missing values for health care spending per capita were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. 
+There were a couple of other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
+
+
+
 ```{r}
+#| warning: false
 joined_data_long |>
   group_by(country) |>
   summarize(avg_life_exp = mean(LifeExpAtBirth),
             avg_health_spending = mean(HealthSpendingPerCapita)) |>
-  mutate(adj_avg_life_exp = log(avg_life_exp),
-         adj_avg_health_spending = log(avg_health_spending)) |>
+  mutate(adj_avg_health_spending = log(avg_health_spending)) |>
   ggplot(mapping = aes(x = adj_avg_health_spending,
                        y = avg_life_exp)) +
-  geom_point()
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Average Health Spending Per Person, Adjusted (US Dollars)",
+       subtitle = "Average Life Expectancy (Years)",
+       title = "Relationship Between Life Expectancy and Health Care Spending per Capita") +
+  theme(axis.title.y = element_blank())
 ```
+
 
 ### Question 2.1.2
 
@@ -112,4 +128,21 @@ joined_data_long |>
 
 ```
 
+
+
+## Linear Regression
+```{r}
+data_transform <- 
+  joined_data_long |>
+  group_by(country) |>
+  summarize(avg_life_exp = mean(LifeExpAtBirth),
+            avg_health_spending = mean(HealthSpendingPerCapita)) |>
+  mutate(adj_avg_life_exp = log(avg_life_exp),
+         adj_avg_health_spending = log(avg_health_spending))
+
+data_transform_lm <- lm(avg_life_exp ~ avg_health_spending, 
+                        data = data_transform)
+data_transform_lm |>
+  tbl_regression(intercept = TRUE)
+```
 
