@@ -74,8 +74,6 @@ We had a total of 33 missing values from health spending per person.The main cou
 There were a couple of other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
 
 
-### Question 2.1
-
 ```{r}
 #| warning: false
 joined_data_long |>
