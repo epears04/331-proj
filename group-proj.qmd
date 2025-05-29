@@ -25,6 +25,10 @@ execute:
 library(knitr)
 library(tidyverse)
 library(bibtex)
+library(gganimate)
+library(gifski)
+library(gt)
+library(glue)
 
 healthcare_spending <- read_csv("data/government_health_spending_per_person_us.csv")
 life_exp <- read_csv("data/lex.csv")
@@ -67,19 +71,13 @@ joined_data_long <- inner_join(healthcare_spending_long,
 ```
 
 These restrictions meant that we had no missing values for life expectancy at birth. 
-We had a total of 33 missing values from health spending per person, this table shows a few of those:
-
-```{r}
-joined_data_long |>
-  filter(is.na(HealthSpendingPerCapita)) |>
-  kable()
-```
+We had a total of 33 missing values from health spending per capita
 
 The main countries that had missing values for health care spending per capita were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. 
 There were a couple of other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
 
 
-### Question 2.1
+### Question 2.1.1
 
 ```{r}
 joined_data_long |>
@@ -92,3 +90,26 @@ joined_data_long |>
                        y = avg_life_exp)) +
   geom_point()
 ```
+
+### Question 2.1.2
+
+This graph shows each country's life expectancy at birth vs the natural logarithm of healthcare spending per person for years 1995-2010
+```{r}
+joined_data_long |>
+  mutate(adj_life_exp = log(LifeExpAtBirth),
+         adj_health_spending = log(HealthSpendingPerCapita)) |>
+  ggplot(mapping = aes(x = adj_health_spending,
+                       y = LifeExpAtBirth)) +
+  geom_point() +
+  transition_states(Year,
+                    transition_length = 2,
+                    state_length = 3) +
+  ease_aes("cubic-in-out") +
+  ggtitle('Life Expectancy vs Natural Logarithm of Health Spending by Country',
+          subtitle = 'Now Showing {closest_state}') +
+  labs(x = "Natural Logarithm of Health Spending Per Capita",
+       y = "Life Expenctancy at Birth")
+
+```
+
+
