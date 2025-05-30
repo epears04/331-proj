@@ -74,21 +74,17 @@ joined_data_long <- inner_join(healthcare_spending_long,
 ```
 
 These restrictions meant that we had no missing values for life expectancy at birth. 
-<<<<<<< HEAD
+
 We had a total of 33 missing values from health spending per capita
 
 The main countries that had missing values for health care spending per capita were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. 
 There were a couple of other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
 
+## Linear regression
 
 ### Question 2.1.1
 
-=======
-We had a total of 33 missing values from health spending per person.The main countries that had missing values for health care spending per capita were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. 
-There were a couple of other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
-
-
-
+This graph shows each countries Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
 ```{r}
 #| warning: false
 joined_data_long |>
@@ -100,11 +96,13 @@ joined_data_long |>
                        y = avg_life_exp)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(x = "Average Health Spending Per Person, Adjusted (US Dollars)",
+  labs(x = "Average Healthcare Spending Per Capita, Adjusted (US Dollars)",
        subtitle = "Average Life Expectancy (Years)",
-       title = "Relationship Between Life Expectancy and Health Care Spending per Capita") +
+       title = "Countries Average Life Expectancy vs Average Healthcare Spending") +
   theme(axis.title.y = element_blank())
 ```
+This shows a positive, moderate, linear correlation between average adjusted Healthcare Spending per Capita and average Life Expectancy for each country from 1995-2010. 
+
 
 
 ### Question 2.1.2
@@ -121,12 +119,13 @@ joined_data_long |>
                     transition_length = 2,
                     state_length = 3) +
   ease_aes("cubic-in-out") +
-  ggtitle('Life Expectancy vs Natural Logarithm of Health Spending by Country',
+  ggtitle('Countries Life Expectancy vs Healthcare Spending Per Capita',
           subtitle = 'Now Showing {closest_state}') +
-  labs(x = "Natural Logarithm of Health Spending Per Capita",
-       y = "Life Expenctancy at Birth")
+  labs(x = "Healthcare Spending Per Capita, Adjusted (US Dollars)",
+       y = "Life Expenctancy at Birth (Years)")
 
 ```
+This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Healthcare Spending and Life Expectancy for every year shown in the animation. 
 
 
 
@@ -137,12 +136,14 @@ data_transform <-
   group_by(country) |>
   summarize(avg_life_exp = mean(LifeExpAtBirth),
             avg_health_spending = mean(HealthSpendingPerCapita)) |>
-  mutate(adj_avg_life_exp = avg_life_exp,
+  mutate(adj_avg_life_exp = log(avg_life_exp),
          adj_avg_health_spending = log(avg_health_spending))
 
-data_transform_lm <- lm(adj_avg_life_exp ~ adj_avg_health_spending, 
+data_transform_lm <- lm(avg_life_exp ~ adj_avg_health_spending, 
                         data = data_transform)
 data_transform_lm |>
   tbl_regression(intercept = TRUE)
 ```
-For every 10% increase in the average health spending per capita, the average life expectancy increases by about 0.33 years or about 4 months. 
+For every 10% increase in the average health spending per capita, our model predicts the average life expectancy to increase by about 0.33 years or about 4 months. 
+
+Our model predicts a life expectancy of 52 years for a country with an adjusted Healthcare Spending per Capita of 0, which translates to one dollar spent on healthcare per person. 
