@@ -16,8 +16,6 @@ execute:
   echo: false
   message: false
   warning: false
-
-
 ---
 
 ```{r setup}
@@ -38,11 +36,10 @@ life_exp <- read_csv("data/lex.csv")
 ```
 ## Introduction
 
-
+In this write up, we explore the relationship between government health spending per person in US dollars and life expectancy at birth. 
 
 ## The Data
 
-We are exploring government health spending per person in US dollars and life expectancy at birth.
 The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This data is from the Institute for Health Metrics and Evaluation from a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
 The government health spending per person dataset gives the average health cost per person that has been paid by the government during a given year, in US dollars using the average exchange rate. This data is comes from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
 
@@ -82,7 +79,7 @@ There were a couple of other countries with missing values for health care spend
 
 ## Linear regression
 
-### Question 2.1.1
+### Data Visualization
 
 This graph shows each countries Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
 ```{r}
@@ -102,10 +99,6 @@ joined_data_long |>
   theme(axis.title.y = element_blank())
 ```
 This shows a positive, moderate, linear correlation between average adjusted Healthcare Spending per Capita and average Life Expectancy for each country from 1995-2010. 
-
-
-
-### Question 2.1.2
 
 This graph shows each country's life expectancy at birth vs the natural logarithm of healthcare spending per person for years 1995-2010
 ```{r}
@@ -128,7 +121,6 @@ joined_data_long |>
 This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Healthcare Spending and Life Expectancy for every year shown in the animation. 
 
 
-
 ## Linear Regression
 ```{r}
 data_transform <- 
@@ -149,10 +141,31 @@ For every 10% increase in the average health spending per capita, our model pred
 Our model predicts a life expectancy of 52 years for a country with an adjusted Healthcare Spending per Capita of 0, which translates to one dollar spent on healthcare per person. 
 
 
-### Variance Table
+### Model Fit
 
 ```{r}
+#reference: https://stackoverflow.com/questions/76418177/how-do-you-change-the-row-names-in-a-gt-table
 
-
-
+augment(data_transform_lm) |> 
+  summarize(var_resp = var(avg_life_exp),
+         var_fitted = var(.fitted),
+         var_resid = var(.resid),
+         r_squared = var_fitted/var_resp) |> 
+  pivot_longer(cols = var_resp:r_squared,
+               names_to = "variance_type",
+               values_to = "value") |> 
+  gt() |> 
+  tab_header(title = md("**Variance and R Squared of the Linear Model**"))|>
+  cols_label("variance_type" = "",
+             "value" = md("**Value**")) |> 
+  text_case_match(
+    "var_resp" ~ "Variance of Life Expectancy*",
+    "var_fitted" ~ "Variance of Fitted Values*",
+    "var_resid" ~ "Variance of Residual Values*",
+    "r_squared" ~ "R\U00B2 Value") |> 
+  fmt_number(columns = everything(),
+             decimals = 2) |> 
+  tab_footnote("*Units are in years\U00B2")
 ```
+
+From the above table, we can see that our model has an $R^2$ value of 0.59. This means that 59% of the variability in life expectancy at birth is explained by government health spending per person. While this is a moderate fit, there is still 41% of variation that is unexplained. This could be from factors not included in our model such as access to education, environmental health, and other things.
