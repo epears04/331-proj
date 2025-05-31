@@ -147,3 +147,12 @@ data_transform_lm |>
 For every 10% increase in the average health spending per capita, our model predicts the average life expectancy to increase by about 0.33 years or about 4 months. 
 
 Our model predicts a life expectancy of 52 years for a country with an adjusted Healthcare Spending per Capita of 0, which translates to one dollar spent on healthcare per person. 
+
+
+### Variance Table
+
+```{r}
+
+
+
+```
