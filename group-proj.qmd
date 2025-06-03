@@ -169,3 +169,15 @@ augment(data_transform_lm) |>
 ```
 
 From the above table, we can see that our model has an $R^2$ value of 0.59. This means that 59% of the variability in life expectancy at birth is explained by government health spending per person. While this is a moderate fit, there is still 41% of variation that is unexplained. This could be from factors not included in our model such as access to education, environmental health, and other things.
+
+
+## Cross Validation
+
+```{r}
+
+data_transform <-
+  data_transform |>
+  mutate(fold_random = sample(rep_len(1:k, length.out = nrow(data_transform)),
+                       size = nrow(data_transform))) 
+```
+
