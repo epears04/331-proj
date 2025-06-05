@@ -94,7 +94,6 @@ The main countries that had missing values for health care spending per capita w
 
 ## Modeling the Relationship between Government Health Spending and Life Expectancy
 
-This graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
 
 ```{r continent_assignment}
 joined_data_long <- joined_data_long|>
@@ -105,27 +104,6 @@ joined_data_long <- joined_data_long|>
                                          country %in% Europe ~ "Europe",
                                          country %in% Oceania ~ "Oceania")))
 ```
-
-```{r}
-#| warning: false
-joined_data_long |>
-  group_by(country, Continent) |>
-  summarize(avg_life_exp = mean(LifeExpAtBirth, na.rm = TRUE),
-            avg_health_spending = mean(HealthSpendingPerCapita, na.rm = TRUE)) |>
-  mutate(adj_avg_health_spending = log(avg_health_spending)) |>
-  ggplot(mapping = aes(x = adj_avg_health_spending,
-                       y = avg_life_exp)) +
-  geom_point(mapping = aes(color = Continent)) +
-  geom_smooth(method = "lm", 
-              se = FALSE,
-              color = "black") +
-  labs(x = "Natural Log of Average Healthcare Spending Per Capita (US Dollars)",
-       subtitle = "Average Life Expectancy (Years)",
-       title = "Countries Average Life Expectancy vs Average Healthcare Spending") +
-  theme(axis.title.y = element_blank())
-```
-
-This shows a positive, moderate, linear correlation between Average Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for each country from 1995-2010.
 
 This graph shows each country's life expectancy at birth vs the natural logarithm of healthcare spending per person for years 1995-2010
 
@@ -147,8 +125,38 @@ joined_data_long |>
 
 ```
 
-This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation.
+Thus graph shows a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation.
 
+<<<<<<< HEAD
+=======
+
+The below graph graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
+
+```{r}
+#| warning: false
+joined_data_long |>
+  group_by(country, Continent) |>
+  summarize(avg_life_exp = mean(LifeExpAtBirth, na.rm = TRUE),
+            avg_health_spending = mean(HealthSpendingPerCapita, na.rm = TRUE)) |>
+  mutate(adj_avg_health_spending = log(avg_health_spending)) |>
+  ggplot(mapping = aes(x = adj_avg_health_spending,
+                       y = avg_life_exp)) +
+  geom_point(mapping = aes(color = Continent)) +
+  geom_smooth(method = "lm", 
+              se = FALSE,
+              color = "black") +
+  labs(x = "Natural Log of Average Healthcare Spending Per Capita (US Dollars)",
+       subtitle = "Average Life Expectancy (Years)",
+       title = "Countries Average Life Expectancy vs Average Healthcare Spending") +
+  theme(axis.title.y = element_blank())
+```
+
+This graph shows a similar trend to the first graph, as it shows a positive, moderate, linear correlation between Average Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for each country from 1995-2010.
+
+
+The linear regression line shown in the above graph is detailed in the following table.
+
+>>>>>>> febb80b544ca2a58166cbfba9470712dc2e9f909
 ```{r}
 data_transform <- 
   joined_data_long |>
@@ -161,7 +169,8 @@ data_transform <-
 data_transform_lm <- lm(avg_life_exp ~ adj_avg_health_spending, 
                         data = data_transform)
 data_transform_lm |>
-  tbl_regression(intercept = TRUE)
+  tbl_regression(intercept = TRUE,
+                 label = adj_avg_health_spending ~ "Natural Log of Average Healthcare Spending (slope)")
 ```
 
 For every 10% increase in the average health spending per capita, our model predicts the average life expectancy to increase by about 0.33 years or about 4 months.
@@ -234,9 +243,9 @@ r_sq_results <- map_dbl(.x = 1:k,
 After performing 19-fold cross validation we obtain an average $R^2$ value of approximately `r round(mean(r_sq_results), 3)`. This is very similar to our training $R^2$ value of 0.6 indicating our model is neither overfitting or underfitting.
 
 ```{r}
+#| warning: false
+
 # plot r^2 values
-
-
 enframe(r_sq_results,
         name = "fold",
         value = "r_squared") |> 
@@ -248,7 +257,8 @@ enframe(r_sq_results,
              color = "#1f90df") +
   geom_text(aes(0, mean(r_sq_results),
                 label = "Training R\U00B2",
-                vjust = -1),
+                vjust = -0.5,
+                hjust = -10),
             size = 3,
             color = "#1f90df")+
   labs(title = "R\U00B2 Value By Fold",
