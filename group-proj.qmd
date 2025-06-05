@@ -200,7 +200,7 @@ From the above table, we can see that our model has an $R^2$ value of 0.6. This 
 
 
 ## Cross Validation
-To evaluate our model further we will use k-fold cross validation. We have 190 countries with data so we will split our data into 19 folds to have 10 observations in each. 
+To evaluate our model further we will use k-fold cross validation. We have 190 countries with data so we will split our data into 19 folds to have 10 observations in each fold. 
 
 ```{r}
 # calculate the r^2 value for a given fold
@@ -235,7 +235,7 @@ r_sq_results <- map_dbl(.x = 1:k,
                       .f = ~fold_evaluation(data_transform, .x))
 ```
 
-After performing 19-fold cross validation we obtain an average $R^2$ value of approximately `r round(mean(r_sq_results), 3)`. This is very similar to our training $R^2$ value of 0.6 indicating our model is neither overfitting or underfitting.
+After performing 19-fold cross validation we obtain an average $R^2$ value of approximately `r round(mean(r_sq_results), 3)`. This is very similar to our training $R^2$ value of 0.6 indicating our model is neither overfitting or underfitting. The graph below shows how each fold's $R^2$ value compares to the linear regression's $R^2$ value. 
 
 ```{r}
 #| warning: false
@@ -253,7 +253,7 @@ enframe(r_sq_results,
   geom_text(aes(0, mean(r_sq_results),
                 label = "Training R\U00B2",
                 vjust = -0.5,
-                hjust = -10),
+                hjust = -9.5),
             size = 3,
             color = "#1f90df")+
   labs(title = "R\U00B2 Value By Fold",
@@ -261,4 +261,7 @@ enframe(r_sq_results,
        x = "Fold") +
   theme(axis.title.y = element_blank())
 ```
+How predictive is your model? How much does the performance vary between folds? Is there any evidence of overfitting?
 
+
+According to the graph, the performance is fairly consistent between each fold, with the exception of fold 3 that has an $R^2$ value of approximately 1.6. Based on the average $R^2$ value and second graph displaying the countries average life expectancy vs average healthcare spending, the linear model doesn't appear to be particularly underfit or overfit. However, there are couple of data points that are below the trend line, specifically from Africa, which indicates that our model is better at predicting countries with a higher life expectancy. 
