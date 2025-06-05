@@ -56,9 +56,9 @@ Oceania <- c("Australia", "Fiji", "Kiribati", "Marshall Islands", "Micronesia", 
 
 In this report, we explore the relationship between government health spending per person (in US dollars) and life expectancy at birth across various countries from 1995 to 2010.
 
-The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This metric gives a broad indicator of a population's overall health and well-being. This data is sourced from the Institute for Health Metrics and Evaluation based on a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
+The life expectancy is measured by the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This metric gives a broad indicator of a population's overall health and well-being. This data is sourced from the Institute for Health Metrics and Evaluation based on a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
 
-The government health spending dataset reflects the average amount of money a a government allocates for each individual's healthcare in a given year, in US dollars using the average exchange rate. This data was sourced from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
+The government health spending reflects the average amount of money a a government allocates for each individual's healthcare in a given year, in US dollars using the average exchange rate. This data was sourced from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
 
 We assume there is a relatively strong positive relationship between government spending and life expectancy. This hypothesis stems from the idea that greater public investment in healthcare enables better access to medical services. Therefore, as government health spending increases, citizens are more likely to receive extensive health care which can contribute to longer and healthier lives [@Anwar_Hyder_Mohamed_Nor_Younis_2023].
 
@@ -267,4 +267,4 @@ enframe(r_sq_results,
 
 ## Conclusion
 
-From our statistical analysis above, we have evidence to conclude that there is an association between the average government health spending per person and the average life expectancy. Upon further inspection, we can see that the association is positive and relatively strong.
+From our statistical analysis above, we have evidence to conclude that there is an association between the average government health spending per person and the average life expectancy. Upon further inspection, we can see that the association is positive and relatively strong. 
