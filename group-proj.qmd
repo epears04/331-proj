@@ -1,6 +1,5 @@
 ---
-title: "Group Project"
-subtitle: "Project Proposal and Data"
+title: "Exploring Government Health Spending and Life Expectancy"
 author: "Ellie, Avery, and Bo"
 bibliography: references.bib
 nocite: |
@@ -9,11 +8,11 @@ format:
   html:
     embed-resources: true
     code-tools: true
+    code-fold: true
     toc: true
 editor: source
 execute: 
   error: true
-  echo: false
   message: false
   warning: false
 ---
@@ -150,7 +149,6 @@ joined_data_long |>
 
 This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation.
 
-
 ```{r}
 data_transform <- 
   joined_data_long |>
@@ -195,12 +193,11 @@ augment(data_transform_lm) |>
   tab_footnote("*Units are in years\U00B2")
 ```
 
-
 From the above table, we can see that our model has an $R^2$ value of 0.6. This means that 60% of the variability in life expectancy at birth is explained by government health spending per person. While this is a moderate fit, there is still 40% of variation that is unexplained. This could be from factors not included in our model such as access to education, environmental health, and other things.
 
-
 ## Cross Validation
-To evaluate our model further we will use k-fold cross validation. We have 190 countries with data so we will split our data into 19 folds to have 10 observations in each. 
+
+To evaluate our model further we will use k-fold cross validation. We have 190 countries with data so we will split our data into 19 folds to have 10 observations in each.
 
 ```{r}
 # calculate the r^2 value for a given fold
@@ -219,7 +216,6 @@ fold_evaluation <- function(data, iteration) {
   return(r_sq)
 }
 ```
-
 
 ```{r}
 set.seed(331)
@@ -261,3 +257,8 @@ enframe(r_sq_results,
   theme(axis.title.y = element_blank())
 ```
 
+## Conclusion
+
+
+
+From our statistical analysis above, we have evidence to conclude that there is an association between the average government health spending per person and the average life expectancy. Upon further inspection, we can see that the association is positive and relatively strong.
