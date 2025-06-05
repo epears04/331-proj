@@ -34,25 +34,24 @@ library(gtsummary)
 healthcare_spending <- read_csv("data/government_health_spending_per_person_us.csv")
 life_exp <- read_csv("data/lex.csv")
 ```
+
 ## Introduction
 
-In this write up, we explore the relationship between government health spending per person in US dollars and life expectancy at birth. 
+  In this report, we explore the relationship between government health spending per person (in US dollars) and life expectancy at birth across various countries from 1995 to 2010.
 
-## The Data
+  The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This metric gives a broad indicator of a population's overall health and well-being. This data is sourced from the Institute for Health Metrics and Evaluation based on a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
+  
+  The government health spending dataset reflects the average amount of money a a government allocates for each individual's healthcare in a given year, in US dollars using the average exchange rate. This data was sourced from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
 
-The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This data is from the Institute for Health Metrics and Evaluation from a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
-The government health spending per person dataset gives the average health cost per person that has been paid by the government during a given year, in US dollars using the average exchange rate. This data is comes from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
+  We assume there is a relatively strong positive relationship between government spending and life expectancy. This hypothesis stems from the idea that greater public investment in healthcare enables better access to medical services. Therefore, as government health spending increases, citizens are more likely to receive extensive health care which can contribute to longer and healthier lives [@Anwar_Hyder_Mohamed_Nor_Younis_2023].
 
-We assume there is a relatively strong positive relationship between government spending and life expectancy. We hypothesize this because if the government spends more money on healthcare for each individual person, they will hopefully be receiving more health care and should be expected to live longer [@Anwar_Hyder_Mohamed_Nor_Younis_2023].
-
-### Data Cleaning
+## Data Cleaning
 
 To start cleaning up our data we removed all years that did not have information on government health spending per person in US dollars. This left us with a data from 1995-2010 for 190 countries.
 
 We also filtered for countries/regions only present in both datasets which excluded the Cook Islands, Niue, Hong Kong, Liechtenstein, North Korea, Palestine, South Sudan, and Taiwan. This may skew our outcomes, as many of these regions are either small in population or area, or have experienced political instability. 
 
 ```{r}
-
 healthcare_spending_long <- pivot_longer(healthcare_spending, 
                                          `1995`:`2010`, 
                                          names_to = "Year",
@@ -72,16 +71,17 @@ joined_data_long <- inner_join(healthcare_spending_long,
 
 These restrictions meant that we had no missing values for life expectancy at birth. 
 
-We had a total of 33 missing values from health spending per capita
+
+
+We had a total of 33 missing values from health spending per capita.
 
 The main countries that had missing values for health care spending per capita were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. 
 There were a couple of other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
 
-## Linear regression
 
-### Data Visualization
+## Modeling the Relationship between Government Health Spending and Life Expectancy
 
-This graph shows each countries Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
+This graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
 ```{r}
 #| warning: false
 joined_data_long |>
@@ -93,12 +93,12 @@ joined_data_long |>
                        y = avg_life_exp)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(x = "Average Healthcare Spending Per Capita, Adjusted (US Dollars)",
+  labs(x = "Natural Log of Average Healthcare Spending Per Capita (US Dollars)",
        subtitle = "Average Life Expectancy (Years)",
        title = "Countries Average Life Expectancy vs Average Healthcare Spending") +
   theme(axis.title.y = element_blank())
 ```
-This shows a positive, moderate, linear correlation between average adjusted Healthcare Spending per Capita and average Life Expectancy for each country from 1995-2010. 
+This shows a positive, moderate, linear correlation between Average Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for each country from 1995-2010. 
 
 This graph shows each country's life expectancy at birth vs the natural logarithm of healthcare spending per person for years 1995-2010
 ```{r}
@@ -114,14 +114,13 @@ joined_data_long |>
   ease_aes("cubic-in-out") +
   ggtitle('Countries Life Expectancy vs Healthcare Spending Per Capita',
           subtitle = 'Now Showing {closest_state}') +
-  labs(x = "Healthcare Spending Per Capita, Adjusted (US Dollars)",
+  labs(x = "Natural Log of Healthcare Spending Per Capita (US Dollars)",
        y = "Life Expenctancy at Birth (Years)")
 
 ```
-This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Healthcare Spending and Life Expectancy for every year shown in the animation. 
+This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation. 
 
 
-## Linear Regression
 ```{r}
 data_transform <- 
   joined_data_long |>
@@ -141,7 +140,6 @@ For every 10% increase in the average health spending per capita, our model pred
 Our model predicts a life expectancy of 52 years for a country with an adjusted Healthcare Spending per Capita of 0, which translates to one dollar spent on healthcare per person. 
 
 
-### Model Fit
 
 ```{r}
 #reference: https://stackoverflow.com/questions/76418177/how-do-you-change-the-row-names-in-a-gt-table
@@ -172,7 +170,6 @@ From the above table, we can see that our model has an $R^2$ value of 0.6. This 
 
 
 ## Cross Validation
-
 To evaluate our model further we will use k-fold cross validation. We have 190 countries with data so we will split our data into 19 folds to have 10 observations in each. 
 
 ```{r}
@@ -232,5 +229,3 @@ enframe(r_sq_results,
        x = "Fold") +
   theme(axis.title.y = element_blank())
 ```
-
-
