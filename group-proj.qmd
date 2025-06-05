@@ -127,8 +127,6 @@ joined_data_long |>
 
 Thus graph shows a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation.
 
-<<<<<<< HEAD
-=======
 
 The below graph graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
 
@@ -156,7 +154,7 @@ This graph shows a similar trend to the first graph, as it shows a positive, mod
 
 The linear regression line shown in the above graph is detailed in the following table.
 
->>>>>>> febb80b544ca2a58166cbfba9470712dc2e9f909
+
 ```{r}
 data_transform <- 
   joined_data_long |>
@@ -268,7 +266,5 @@ enframe(r_sq_results,
 ```
 
 ## Conclusion
-
-
 
 From our statistical analysis above, we have evidence to conclude that there is an association between the average government health spending per person and the average life expectancy. Upon further inspection, we can see that the association is positive and relatively strong.
