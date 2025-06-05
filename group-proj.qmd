@@ -35,21 +35,39 @@ healthcare_spending <- read_csv("data/government_health_spending_per_person_us.c
 life_exp <- read_csv("data/lex.csv")
 ```
 
+```{r continent_definition}
+NorthAmerica <- c("Antigua and Barbuda", "Bahamas", "Barbados", "Belize", "Canada", "Costa Rica", "Cuba", "Dominica", "Dominican Republic", "El Salvador", "Grenada", "Guatemala", "Haiti", "Honduras", "Jamaica", "Mexico", "Nicaragua", "Panama", "St. Kitts and Nevis", "St. Lucia", "St. Vincent and the Grenadines", "Trinidad and Tobago", "USA")
+
+
+SouthAmerica <- c("Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador", "Guyana", "Paraguay", "Peru", "Suriname", "Uruguay", "Venezuela")
+
+
+Europe <- c("Albania", "Andorra", "Austria", "Belarus", "Belgium", "Bosnia and Herzegovina", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands", "North Macedonia", "Norway", "Poland", "Portugal", "Romania", "Russia", "San Marino", "Serbia", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "UK", "Ukraine", "Vatican City", "Slovak Republic")
+
+
+Africa <- c("Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cameroon", "Cape Verde", "Central African Republic", "Chad", "Comoros", "Cote d'Ivoire", "Djibouti", "DR Congo", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria", "Republic of the Congo", "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone", "Somalia", "South Africa", "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe", "Congo, Rep.", "Congo, Dem. Rep.")
+
+Asia <- c("Afghanistan", "Armenia", "Azerbaijan", "Bahrain", "Bangladesh", "Bhutan", "Brunei", "Cambodia", "China", "Georgia", "India", "Indonesia", "Iran", "Iraq", "Israel", "Japan", "Jordan", "Kazakhstan", "Kuwait", "Kyrgyzstan", "Laos", "Lebanon", "Malaysia", "Maldives", "Mongolia", "Myanmar", "Nepal", "North Korea", "Oman", "Pakistan", "Palestine", "Philippines", "Qatar", "Saudi Arabia", "Singapore", "South Korea", "Sri Lanka", "Syria", "Tajikistan", "Thailand", "Timor-Leste", "Turkey", "Turkmenistan", "UAE", "Uzbekistan", "Vietnam", "Yemen", "Lao", "Kyrgyz Republic")
+
+
+Oceania <- c("Australia", "Fiji", "Kiribati", "Marshall Islands", "Micronesia", "Nauru", "New Zealand", "Palau", "Papua New Guinea", "Samoa", "Solomon Islands", "Tonga", "Tuvalu", "Vanuatu", "Micronesia, Fed. Sts.")
+```
+
 ## Introduction
 
-  In this report, we explore the relationship between government health spending per person (in US dollars) and life expectancy at birth across various countries from 1995 to 2010.
+In this report, we explore the relationship between government health spending per person (in US dollars) and life expectancy at birth across various countries from 1995 to 2010.
 
-  The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This metric gives a broad indicator of a population's overall health and well-being. This data is sourced from the Institute for Health Metrics and Evaluation based on a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
-  
-  The government health spending dataset reflects the average amount of money a a government allocates for each individual's healthcare in a given year, in US dollars using the average exchange rate. This data was sourced from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
+The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This metric gives a broad indicator of a population's overall health and well-being. This data is sourced from the Institute for Health Metrics and Evaluation based on a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
 
-  We assume there is a relatively strong positive relationship between government spending and life expectancy. This hypothesis stems from the idea that greater public investment in healthcare enables better access to medical services. Therefore, as government health spending increases, citizens are more likely to receive extensive health care which can contribute to longer and healthier lives [@Anwar_Hyder_Mohamed_Nor_Younis_2023].
+The government health spending dataset reflects the average amount of money a a government allocates for each individual's healthcare in a given year, in US dollars using the average exchange rate. This data was sourced from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
+
+We assume there is a relatively strong positive relationship between government spending and life expectancy. This hypothesis stems from the idea that greater public investment in healthcare enables better access to medical services. Therefore, as government health spending increases, citizens are more likely to receive extensive health care which can contribute to longer and healthier lives [@Anwar_Hyder_Mohamed_Nor_Younis_2023].
 
 ## Data Cleaning
 
 To start cleaning up our data we removed all years that did not have information on government health spending per person in US dollars. This left us with a data from 1995-2010 for 190 countries.
 
-We also filtered for countries/regions only present in both datasets which excluded the Cook Islands, Niue, Hong Kong, Liechtenstein, North Korea, Palestine, South Sudan, and Taiwan. This may skew our outcomes, as many of these regions are either small in population or area, or have experienced political instability. 
+We also filtered for countries/regions only present in both datasets which excluded the Cook Islands, Niue, Hong Kong, Liechtenstein, North Korea, Palestine, South Sudan, and Taiwan. This may skew our outcomes, as many of these regions are either small in population or area, or have experienced political instability.
 
 ```{r}
 healthcare_spending_long <- pivot_longer(healthcare_spending, 
@@ -69,48 +87,59 @@ joined_data_long <- inner_join(healthcare_spending_long,
                               by = c("country", "Year"))
 ```
 
-These restrictions meant that we had no missing values for life expectancy at birth. 
-
-
+These restrictions meant that we had no missing values for life expectancy at birth.
 
 We had a total of 33 missing values from health spending per capita.
 
-The main countries that had missing values for health care spending per capita were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. 
-There were a couple of other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
-
+The main countries that had missing values for health care spending per capita were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. There were a couple of other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
 
 ## Modeling the Relationship between Government Health Spending and Life Expectancy
 
 This graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
+
+```{r continent_assignment}
+joined_data_long <- joined_data_long|>
+  mutate(Continent = as_factor(case_when(country %in% NorthAmerica ~ "North America",
+                                         country %in% SouthAmerica ~ "South America",
+                                         country %in% Asia ~ "Asia",
+                                         country %in% Africa ~ "Africa",
+                                         country %in% Europe ~ "Europe",
+                                         country %in% Oceania ~ "Oceania")))
+```
+
 ```{r}
 #| warning: false
 joined_data_long |>
-  group_by(country) |>
+  group_by(country, Continent) |>
   summarize(avg_life_exp = mean(LifeExpAtBirth),
             avg_health_spending = mean(HealthSpendingPerCapita)) |>
   mutate(adj_avg_health_spending = log(avg_health_spending)) |>
   ggplot(mapping = aes(x = adj_avg_health_spending,
                        y = avg_life_exp)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(mapping = aes(color = Continent)) +
+  geom_smooth(method = "lm", 
+              se = FALSE,
+              color = "black") +
   labs(x = "Natural Log of Average Healthcare Spending Per Capita (US Dollars)",
        subtitle = "Average Life Expectancy (Years)",
        title = "Countries Average Life Expectancy vs Average Healthcare Spending") +
   theme(axis.title.y = element_blank())
 ```
-This shows a positive, moderate, linear correlation between Average Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for each country from 1995-2010. 
+
+This shows a positive, moderate, linear correlation between Average Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for each country from 1995-2010.
 
 This graph shows each country's life expectancy at birth vs the natural logarithm of healthcare spending per person for years 1995-2010
+
 ```{r}
 joined_data_long |>
   mutate(adj_life_exp = log(LifeExpAtBirth),
          adj_health_spending = log(HealthSpendingPerCapita)) |>
   ggplot(mapping = aes(x = adj_health_spending,
                        y = LifeExpAtBirth)) +
-  geom_point() +
+  geom_point(mapping = aes(color = Continent)) +
   transition_states(Year,
-                    transition_length = 2,
-                    state_length = 3) +
+                    transition_length = 4,
+                    state_length = 8) +
   ease_aes("cubic-in-out") +
   ggtitle('Countries Life Expectancy vs Healthcare Spending Per Capita',
           subtitle = 'Now Showing {closest_state}') +
@@ -118,7 +147,8 @@ joined_data_long |>
        y = "Life Expenctancy at Birth (Years)")
 
 ```
-This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation. 
+
+This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation.
 
 
 ```{r}
@@ -135,11 +165,10 @@ data_transform_lm <- lm(avg_life_exp ~ adj_avg_health_spending,
 data_transform_lm |>
   tbl_regression(intercept = TRUE)
 ```
-For every 10% increase in the average health spending per capita, our model predicts the average life expectancy to increase by about 0.33 years or about 4 months. 
 
-Our model predicts a life expectancy of 52 years for a country with an adjusted Healthcare Spending per Capita of 0, which translates to one dollar spent on healthcare per person. 
+For every 10% increase in the average health spending per capita, our model predicts the average life expectancy to increase by about 0.33 years or about 4 months.
 
-
+Our model predicts a life expectancy of 52 years for a country with an adjusted Healthcare Spending per Capita of 0, which translates to one US dollar spent on healthcare per person.
 
 ```{r}
 #reference: https://stackoverflow.com/questions/76418177/how-do-you-change-the-row-names-in-a-gt-table
@@ -166,8 +195,7 @@ augment(data_transform_lm) |>
   tab_footnote("*Units are in years\U00B2")
 ```
 
-From the above table, we can see that our model has an $R^2$ value of 0.59. This means that 59% of the variability in life expectancy at birth is explained by government health spending per person. While this is a moderate fit, there is still 41% of variation that is unexplained. This could be from factors not included in our model such as access to education, environmental health, and other things.
-
+From the above table, we can see that our model has an $R^2$ value of 0.59. This means that 59% of the variability in life expectancy at birth is explained by government health spending per person. While this is a moderate fit, there is still 41% of variation that is unexplained. This could be from factors not included in our model, such as access to education, environmental health, and other variables.
 
 ## Cross Validation
 
@@ -181,3 +209,4 @@ data_transform <-
 
 
 ```
+
