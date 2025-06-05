@@ -72,16 +72,13 @@ joined_data_long <- inner_join(healthcare_spending_long,
 
 These restrictions meant that we had no missing values for life expectancy at birth. 
 
-We had a total of 33 missing values from health spending per capita
-
-The main countries that had missing values for health care spending per capita were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. 
-There were a couple of other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
+We had a total of 33 missing values from health spending per capita. The main countries that had missing values were Afghanistan from 1995-2001 as well as Zimbabwe and Somalia from 2002-2010. We believe that these numbers are missing due to ongoing conflict in these countries during those time periods. Along with these main three, there were a few other countries with missing values for health care spending per capita, however, they appear to be missing at random since they are one-offs.
 
 ## Linear regression
 
 ### Data Visualization
 
-This graph shows each countries Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
+This graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
 ```{r}
 #| warning: false
 joined_data_long |>
@@ -98,7 +95,7 @@ joined_data_long |>
        title = "Countries Average Life Expectancy vs Average Healthcare Spending") +
   theme(axis.title.y = element_blank())
 ```
-This shows a positive, moderate, linear correlation between average adjusted Healthcare Spending per Capita and average Life Expectancy for each country from 1995-2010. 
+This shows a positive, moderate, linear correlation between Average Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for each country from 1995-2010. 
 
 This graph shows each country's life expectancy at birth vs the natural logarithm of healthcare spending per person for years 1995-2010
 ```{r}
@@ -118,7 +115,7 @@ joined_data_long |>
        y = "Life Expenctancy at Birth (Years)")
 
 ```
-This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Healthcare Spending and Life Expectancy for every year shown in the animation. 
+This shows a similar trend as the first graph, as there is a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation. 
 
 
 ## Linear Regression
