@@ -1,6 +1,5 @@
 ---
-title: "Group Project"
-subtitle: "Project Proposal and Data"
+title: "Exploring Government Health Spending and Life Expectancy"
 author: "Ellie, Avery, and Bo"
 bibliography: references.bib
 nocite: |
@@ -9,11 +8,11 @@ format:
   html:
     embed-resources: true
     code-tools: true
+    code-fold: true
     toc: true
 editor: source
 execute: 
   error: true
-  echo: false
   message: false
   warning: false
 ---
@@ -57,9 +56,9 @@ Oceania <- c("Australia", "Fiji", "Kiribati", "Marshall Islands", "Micronesia", 
 
 In this report, we explore the relationship between government health spending per person (in US dollars) and life expectancy at birth across various countries from 1995 to 2010.
 
-The life expectancy at birth dataset gives the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This metric gives a broad indicator of a population's overall health and well-being. This data is sourced from the Institute for Health Metrics and Evaluation based on a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
+The life expectancy is measured by the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This metric gives a broad indicator of a population's overall health and well-being. This data is sourced from the Institute for Health Metrics and Evaluation based on a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
 
-The government health spending dataset reflects the average amount of money a a government allocates for each individual's healthcare in a given year, in US dollars using the average exchange rate. This data was sourced from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
+The government health spending reflects the average amount of money a a government allocates for each individual's healthcare in a given year, in US dollars using the average exchange rate. This data was sourced from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
 
 We assume there is a relatively strong positive relationship between government spending and life expectancy. This hypothesis stems from the idea that greater public investment in healthcare enables better access to medical services. Therefore, as government health spending increases, citizens are more likely to receive extensive health care which can contribute to longer and healthier lives [@Anwar_Hyder_Mohamed_Nor_Younis_2023].
 
@@ -154,6 +153,7 @@ This graph shows a similar trend to the first graph, as it shows a positive, mod
 
 The linear regression line shown in the above graph is further detailed in the following table.
 
+
 ```{r}
 data_transform <- 
   joined_data_long |>
@@ -199,12 +199,10 @@ augment(data_transform_lm) |>
   tab_footnote("*Units are in years\U00B2")
 ```
 
-
 From the above table, we can see that our model has an $R^2$ value of 0.6. This means that 60% of the variability in life expectancy at birth is explained by government health spending per person. While this is a moderate fit, there is still 40% of variation that is unexplained. This could be from factors not included in our model such as access to education, environmental health, and other things.
 
-
 ## Cross Validation
-To evaluate our model further we will use k-fold cross validation. We have 190 countries with data so we will split our data into 19 folds to have 10 observations in each. 
+To evaluate our model further and confirm our $R^2$ value we will use k-fold cross validation.  We have 190 countries with data so we will split our data into 19 folds to have 10 observations in each fold. 
 
 ```{r}
 # calculate the r^2 value for a given fold
@@ -224,7 +222,6 @@ fold_evaluation <- function(data, iteration) {
 }
 ```
 
-
 ```{r}
 set.seed(331)
 k <- 19
@@ -239,7 +236,7 @@ r_sq_results <- map_dbl(.x = 1:k,
                       .f = ~fold_evaluation(data_transform, .x))
 ```
 
-After performing 19-fold cross validation we obtain an average $R^2$ value of approximately `r round(mean(r_sq_results), 3)`. This is very similar to our training $R^2$ value of 0.6 indicating our model is neither overfitting or underfitting.
+After performing 19-fold cross validation we obtain an average $R^2$ value of approximately `r round(mean(r_sq_results), 3)`. This is very similar to our training $R^2$ value of 0.6 indicating our model is neither overfitting or underfitting. The graph below shows how each fold's $R^2$ value compares to the linear regression's $R^2$ value. 
 
 ```{r}
 #| warning: false
@@ -257,7 +254,7 @@ enframe(r_sq_results,
   geom_text(aes(0, mean(r_sq_results),
                 label = "Training R\U00B2",
                 vjust = -0.5,
-                hjust = -10),
+                hjust = -9.5),
             size = 3,
             color = "#1f90df")+
   labs(title = "R\U00B2 Value By Fold",
@@ -265,4 +262,10 @@ enframe(r_sq_results,
        x = "Fold") +
   theme(axis.title.y = element_blank())
 ```
+
+According to the graph, the performance is fairly consistent between each fold, with the exception of fold 3 that has an $R^2$ value of approximately 1.6. Based on the average $R^2$ value and second graph displaying the countries average life expectancy vs. average healthcare spending, the linear model doesn't appear to be particularly underfit or overfit. 
+
+## Conclusion
+
+From our statistical analysis above, we have evidence to conclude that there is an association between the average government health spending per person and the average life expectancy. Upon further inspection, we can see that the association is positive and relatively strong.
 
