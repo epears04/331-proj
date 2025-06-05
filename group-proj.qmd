@@ -243,9 +243,9 @@ r_sq_results <- map_dbl(.x = 1:k,
 After performing 19-fold cross validation we obtain an average $R^2$ value of approximately `r round(mean(r_sq_results), 3)`. This is very similar to our training $R^2$ value of 0.6 indicating our model is neither overfitting or underfitting.
 
 ```{r}
+#| warning: false
+
 # plot r^2 values
-
-
 enframe(r_sq_results,
         name = "fold",
         value = "r_squared") |> 
@@ -257,7 +257,8 @@ enframe(r_sq_results,
              color = "#1f90df") +
   geom_text(aes(0, mean(r_sq_results),
                 label = "Training R\U00B2",
-                vjust = -1),
+                vjust = -0.5,
+                hjust = -10),
             size = 3,
             color = "#1f90df")+
   labs(title = "R\U00B2 Value By Fold",
