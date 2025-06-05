@@ -86,8 +86,8 @@ This graph shows each countries Life Expectancy vs their Healthcare Spending per
 #| warning: false
 joined_data_long |>
   group_by(country) |>
-  summarize(avg_life_exp = mean(LifeExpAtBirth),
-            avg_health_spending = mean(HealthSpendingPerCapita)) |>
+  summarize(avg_life_exp = mean(LifeExpAtBirth, na.rm = TRUE),
+            avg_health_spending = mean(HealthSpendingPerCapita, na.rm = TRUE)) |>
   mutate(adj_avg_health_spending = log(avg_health_spending)) |>
   ggplot(mapping = aes(x = adj_avg_health_spending,
                        y = avg_life_exp)) +
@@ -126,8 +126,8 @@ This shows a similar trend as the first graph, as there is a positive, moderate,
 data_transform <- 
   joined_data_long |>
   group_by(country) |>
-  summarize(avg_life_exp = mean(LifeExpAtBirth),
-            avg_health_spending = mean(HealthSpendingPerCapita)) |>
+  summarize(avg_life_exp = mean(LifeExpAtBirth, na.rm = TRUE),
+            avg_health_spending = mean(HealthSpendingPerCapita, na.rm = TRUE)) |>
   mutate(adj_avg_life_exp = log(avg_life_exp),
          adj_avg_health_spending = log(avg_health_spending))
 
@@ -168,16 +168,69 @@ augment(data_transform_lm) |>
   tab_footnote("*Units are in years\U00B2")
 ```
 
-From the above table, we can see that our model has an $R^2$ value of 0.59. This means that 59% of the variability in life expectancy at birth is explained by government health spending per person. While this is a moderate fit, there is still 41% of variation that is unexplained. This could be from factors not included in our model such as access to education, environmental health, and other things.
+From the above table, we can see that our model has an $R^2$ value of 0.6. This means that 60% of the variability in life expectancy at birth is explained by government health spending per person. While this is a moderate fit, there is still 40% of variation that is unexplained. This could be from factors not included in our model such as access to education, environmental health, and other things.
 
 
 ## Cross Validation
 
-```{r}
+To evaluate our model further we will use k-fold cross validation. We have 190 countries with data so we will split our data into 19 folds to have 10 observations in each. 
 
-data_transform <-
-  data_transform |>
+```{r}
+# calculate the r^2 value for a given fold
+fold_evaluation <- function(data, iteration) {
+  fold_dat <- data |> 
+    filter(fold_random == iteration)
+  train_dat <- data |> 
+    filter(fold_random != iteration) 
+  
+  it_lm <- lm(avg_life_exp ~ adj_avg_health_spending,
+              data = train_dat) 
+  
+  fold_preds <- predict(it_lm, newdata = fold_dat)
+  r_sq <- var(fold_preds) / var(fold_dat$avg_life_exp)
+  
+  return(r_sq)
+}
+```
+
+
+```{r}
+set.seed(331)
+k <- 19
+
+# split data into folds
+data_transform <- data_transform |> 
   mutate(fold_random = sample(rep_len(1:k, length.out = nrow(data_transform)),
                        size = nrow(data_transform))) 
+
+# get r^2 value of each fold
+r_sq_results <- map_dbl(.x = 1:k,
+                      .f = ~fold_evaluation(data_transform, .x))
 ```
+
+After performing 19-fold cross validation we obtain an average $R^2$ value of approximately `r round(mean(r_sq_results), 3)`. This is very similar to our training $R^2$ value of 0.6 indicating our model is neither overfitting or underfitting.
+
+```{r}
+# plot r^2 values
+
+enframe(r_sq_results,
+        name = "fold",
+        value = "r_squared") |> 
+  ggplot(aes(x = fold,
+             y = r_squared)) +
+  geom_point() +
+  geom_hline(yintercept = mean(r_sq_results),
+             linetype = "longdash",
+             color = "#1f90df") +
+  geom_text(aes(0, mean(r_sq_results),
+                label = "Training R\U00B2",
+                vjust = -1),
+            size = 3,
+            color = "#1f90df")+
+  labs(title = "R\U00B2 Value By Fold",
+       subtitle = "R\U00B2 Value",
+       x = "Fold") +
+  theme(axis.title.y = element_blank())
+```
+
 
