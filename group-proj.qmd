@@ -65,9 +65,9 @@ We assume there is a relatively strong positive relationship between government 
 
 ## Data Cleaning
 
-To start cleaning up our data we removed all years that did not have information on government health spending per person in US dollars. This left us with a data from 1995-2010 for 190 countries.
+To start cleaning up our data, we removed all years that did not have information on government health spending per person in US dollars. This left us with a data from 1995-2010 for 190 countries.
 
-We also filtered for countries/regions only present in both datasets which excluded the Cook Islands, Niue, Hong Kong, Liechtenstein, North Korea, Palestine, South Sudan, and Taiwan. This may skew our outcomes, as many of these regions are either small in population or area, or have experienced political instability.
+We also filtered for countries/regions only present in both datasets, which excluded the Cook Islands, Niue, Hong Kong, Liechtenstein, North Korea, Palestine, South Sudan, and Taiwan. This may skew our outcomes, as many of these regions are either small in population or area, or have experienced political instability.
 
 ```{r}
 healthcare_spending_long <- pivot_longer(healthcare_spending, 
@@ -126,10 +126,10 @@ joined_data_long |>
 
 ```
 
-Thus graph shows a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation.
+This graph shows a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation.
 
 
-The below graph graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010.
+The below graph graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010. This graph uses the method of linear regression to overlay a line of best fit for our data. This method finds the line of best fit by minimizing the total of the squared residuals from each point onto the line.
 
 ```{r}
 #| warning: false
@@ -152,8 +152,7 @@ joined_data_long |>
 
 This graph shows a similar trend to the first graph, as it shows a positive, moderate, linear correlation between Average Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for each country from 1995-2010.
 
-
-The linear regression line shown in the above graph is detailed in the following table.
+The linear regression line shown in the above graph is further detailed in the following table.
 
 ```{r}
 data_transform <- 
@@ -171,9 +170,9 @@ data_transform_lm |>
                  label = adj_avg_health_spending ~ "Natural Log of Average Healthcare Spending (slope)")
 ```
 
-For every 10% increase in the average health spending per capita, our model predicts the average life expectancy to increase by about 0.33 years or about 4 months.
+This table shows us that for every 10% increase in the average health spending per capita, our model predicts the average life expectancy to increase by about 0.33 years or about 4 months.
 
-Our model predicts a life expectancy of 52 years for a country with an adjusted Healthcare Spending per Capita of 0, which translates to one US dollar spent on healthcare per person.
+Furthermore, our model predicts a life expectancy of 52 years for a country with an adjusted Healthcare Spending per Capita of 0, which translates to one US dollar spent on healthcare per person.
 
 ```{r}
 #reference: https://stackoverflow.com/questions/76418177/how-do-you-change-the-row-names-in-a-gt-table
