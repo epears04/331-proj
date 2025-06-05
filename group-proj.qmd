@@ -267,5 +267,7 @@ According to the graph, the performance is fairly consistent between each fold, 
 
 ## Conclusion
 
-From our statistical analysis above, we have evidence to conclude that there is an association between the average government health spending per person and the average life expectancy. Upon further inspection, we can see that the association is positive and relatively strong.
+  The purpose of this study was to determine whether there is an association between the average government health spending per person (in US dollars) and the average life expectancy at birth. Based on a visual inspection of the scatterplots, we hypothesized that there would be a positive, moderate association between these two variables. This was then supported by our statistical analysis. 
+  
+  We ran a linear regression and found that there is a statistically significant positive correlation between government health spending and life expectancy. These findings suggest that, on average, countries that increase government spending on healthcare per person tend to have populations that live longer. These results emphasize the important role that government investment in healthcare can play in improving longevity. 
 
