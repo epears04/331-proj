@@ -271,3 +271,6 @@ According to the graph, the performance is fairly consistent between each fold, 
   
   We ran a linear regression and found that there is a statistically significant positive correlation between government health spending and life expectancy. These findings suggest that, on average, countries that increase government spending on healthcare per person tend to have populations that live longer. These results emphasize the important role that government investment in healthcare can play in improving longevity. 
 
+
+For access to the data and code used in this analysis, please visit the GitHub repository [here](https://github.com/epears04/331-proj).
+
