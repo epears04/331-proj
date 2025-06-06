@@ -58,7 +58,7 @@ In this report, we explore the relationship between government health spending p
 
 The life expectancy is measured by the number of years a newborn infant will live if the current mortality rates were to stay the same throughout their life. This metric gives a broad indicator of a population's overall health and well-being. This data is sourced from the Institute for Health Metrics and Evaluation based on a study that was published in 2018 [@Life_Expectancy_at_Birth_Gapminder].
 
-The government health spending reflects the average amount of money a a government allocates for each individual's healthcare in a given year, in US dollars using the average exchange rate. This data was sourced from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
+The government health spending reflects the average amount of money a country allocates for each individual's healthcare in a given year, in US dollars using the average exchange rate. This data was sourced from the World Health Organization's Global Health Observatory [@Global_Health_Expenditure_Database].
 
 We assume there is a relatively strong positive relationship between government spending and life expectancy. This hypothesis stems from the idea that greater public investment in healthcare enables better access to medical services. Therefore, as government health spending increases, citizens are more likely to receive extensive health care which can contribute to longer and healthier lives [@Anwar_Hyder_Mohamed_Nor_Younis_2023].
 
@@ -68,7 +68,7 @@ To start cleaning up our data, we removed all years that did not have informatio
 
 We also filtered for countries/regions only present in both datasets, which excluded the Cook Islands, Niue, Hong Kong, Liechtenstein, North Korea, Palestine, South Sudan, and Taiwan. This may skew our outcomes, as many of these regions are either small in population or area, or have experienced political instability.
 
-```{r}
+```{r data_cleaning}
 healthcare_spending_long <- pivot_longer(healthcare_spending, 
                                          `1995`:`2010`, 
                                          names_to = "Year",
@@ -105,12 +105,11 @@ joined_data_long <- joined_data_long|>
                                          country %in% Oceania ~ "Oceania")))
 ```
 
-This graph shows each country's life expectancy at birth vs the natural logarithm of healthcare spending per person for years 1995-2010
+First, we wanted to explore changes in our data over time. This animation shows each country's life expectancy at birth compared to the natural logarithm transformation of healthcare spending per person for years 1995-2010.
 
-```{r}
+```{r animated_graph}
 joined_data_long |>
-  mutate(adj_life_exp = log(LifeExpAtBirth),
-         adj_health_spending = log(HealthSpendingPerCapita)) |>
+  mutate(adj_health_spending = log(HealthSpendingPerCapita)) |>
   ggplot(mapping = aes(x = adj_health_spending,
                        y = LifeExpAtBirth)) +
   geom_point(mapping = aes(color = Continent)) +
@@ -121,16 +120,16 @@ joined_data_long |>
   ggtitle('Countries Life Expectancy vs Healthcare Spending Per Capita',
           subtitle = 'Now Showing {closest_state}') +
   labs(x = "Natural Log of Healthcare Spending Per Capita (US Dollars)",
-       y = "Life Expenctancy at Birth (Years)")
+       y = "Life Expectancy at Birth (Years)")
 
 ```
 
 This graph shows a positive, moderate, linear relationship between Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for every year shown in the animation.
 
 
-The below graph graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010. This graph uses the method of linear regression to overlay a line of best fit for our data. This method finds the line of best fit by minimizing the total of the squared residuals from each point onto the line.
+The below graph shows each countries' Life Expectancy vs their Healthcare Spending per Capita, averaged over the years 1995-2010. This graph uses the method of linear regression to overlay a line of best fit for our data. This method finds the line of best fit by minimizing the total of the squared residuals from each point onto the line. 
 
-```{r}
+```{r scatterplot}
 #| warning: false
 joined_data_long |>
   group_by(country, Continent) |>
@@ -151,10 +150,10 @@ joined_data_long |>
 
 This graph shows a similar trend to the first graph, as it shows a positive, moderate, linear correlation between Average Life Expectancy and Natural Logarithm of Average Healthcare Spending per Capita for each country from 1995-2010.
 
-The linear regression line shown in the above graph is further detailed in the following table.
+The linear regression line shown in the above graph is further detailed in the following table where we used the following fitted regression model: 
+$$\widehat{\text{Life Expectancy}} = \hat{\beta_0}+ \hat{\beta_1} \cdot \ln({\text{Health Spending Per Capita}})$$
 
-
-```{r}
+```{r lm_model}
 data_transform <- 
   joined_data_long |>
   group_by(country) |>
@@ -170,11 +169,12 @@ data_transform_lm |>
                  label = adj_avg_health_spending ~ "Natural Log of Average Healthcare Spending (slope)")
 ```
 
-This table shows us that for every 10% increase in the average health spending per capita, our model predicts the average life expectancy to increase by about 0.33 years or about 4 months.
+
+This table shows us that for every 10% increase in the average health spending per capita, our model predicts the average life expectancy to increase by about 0.36 years or about 4.3 months.
 
 Furthermore, our model predicts a life expectancy of 52 years for a country with an adjusted Healthcare Spending per Capita of 0, which translates to one US dollar spent on healthcare per person.
 
-```{r}
+```{r var_table}
 #reference: https://stackoverflow.com/questions/76418177/how-do-you-change-the-row-names-in-a-gt-table
 
 augment(data_transform_lm) |> 
@@ -204,7 +204,7 @@ From the above table, we can see that our model has an $R^2$ value of 0.6. This 
 ## Cross Validation
 To evaluate our model further and confirm our $R^2$ value we will use k-fold cross validation.  We have 190 countries with data so we will split our data into 19 folds to have 10 observations in each fold. 
 
-```{r}
+```{r cv_function}
 # calculate the r^2 value for a given fold
 fold_evaluation <- function(data, iteration) {
   fold_dat <- data |> 
@@ -222,7 +222,7 @@ fold_evaluation <- function(data, iteration) {
 }
 ```
 
-```{r}
+```{r k_fold_cv}
 set.seed(331)
 k <- 19
 
@@ -238,7 +238,7 @@ r_sq_results <- map_dbl(.x = 1:k,
 
 After performing 19-fold cross validation we obtain an average $R^2$ value of approximately `r round(mean(r_sq_results), 3)`. This is very similar to our training $R^2$ value of 0.6 indicating our model is neither overfitting or underfitting. The graph below shows how each fold's $R^2$ value compares to the linear regression's $R^2$ value. 
 
-```{r}
+```{r r_sq_graph}
 #| warning: false
 
 # plot r^2 values
